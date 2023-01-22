@@ -44,7 +44,7 @@ export default function App() {
 		}
 	};
 
-	// Reloads the app to hard reset the game bc I was too lazy to figure out a better way to do it
+	// Reloads the app to hard reset the game bc I was too lazy to figure out a better way to do it.
 	const reset = () => {
 		DevSettings.reload();
 	};
