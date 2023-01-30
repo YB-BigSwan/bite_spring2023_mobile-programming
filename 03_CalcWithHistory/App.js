@@ -6,13 +6,14 @@ import {
 	View,
 	TextInput,
 	TouchableOpacity,
+	FlatList,
 } from 'react-native';
 
 export default function App() {
 	// initialize states of the input fields and result.
 	// num1 is the upper input field, num2 is the lower field
-	const [num1, setNum1] = React.useState(0);
-	const [num2, setNum2] = React.useState(0);
+	const [num1, setNum1] = React.useState();
+	const [num2, setNum2] = React.useState();
 	const [result, setResult] = React.useState();
 	const [history, setHistory] = React.useState([]);
 
@@ -22,13 +23,13 @@ export default function App() {
 	const add = () => {
 		let sum = num1 + num2;
 		setResult(sum);
-		setHistory([...history, `${num1} + ${num2} = ${sum}`]);
+		setHistory([...history, { key: `${num1} + ${num2} = ${sum}` }]);
 	};
 	// subtracts the numbers and sets the state of result to the difference
 	const subtract = () => {
 		let diff = num1 - num2;
 		setResult(diff);
-		setHistory([...history, `${num1} - ${num2} = ${diff}`]);
+		setHistory([...history, { key: `${num1} - ${num2} = ${diff}` }]);
 	};
 
 	return (
@@ -65,11 +66,12 @@ export default function App() {
 			{/* History */}
 			<View style={styles.historyContainer}>
 				<Text style={styles.txtStyle}>History:</Text>
-				{history.map((item, index) => (
-					<Text key={index} style={styles.txtStyle}>
-						{item}
-					</Text>
-				))}
+				<FlatList
+					data={history}
+					renderItem={({ item }) => (
+						<Text style={styles.txtStyle}>{item.key}</Text>
+					)}
+				/>
 			</View>
 
 			<StatusBar style='auto' />
