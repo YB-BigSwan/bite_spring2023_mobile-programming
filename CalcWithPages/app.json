@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "04_ShoppingList",
-    "slug": "04_ShoppingList",
+    "name": "CalcWithPages",
+    "slug": "CalcWithPages",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
