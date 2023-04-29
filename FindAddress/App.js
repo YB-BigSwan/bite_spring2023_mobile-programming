@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	View,
 	TextInput,
@@ -7,6 +7,7 @@ import {
 	Text,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 function geocodeAddress(address) {
 	const apiKey = 'your-api-key'; // Replace with your own API key
@@ -28,6 +29,23 @@ function geocodeAddress(address) {
 export default function App() {
 	const [region, setRegion] = useState(null);
 	const [address, setAddress] = useState('');
+
+	useEffect(() => {
+		(async () => {
+			const { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== 'granted') {
+				console.error('Location permission not granted');
+				return;
+			}
+			const { coords } = await Location.getCurrentPositionAsync();
+			setRegion({
+				latitude: coords.latitude,
+				longitude: coords.longitude,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			});
+		})();
+	}, []);
 
 	const handleAddressSubmit = async () => {
 		const coords = await geocodeAddress(address);
