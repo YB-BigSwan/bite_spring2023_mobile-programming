@@ -1,24 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
 import {
 	FlatList,
 	Image,
-	TextInput,
 	StyleSheet,
 	Text,
-	View,
+	TextInput,
 	TouchableOpacity,
+	View,
 } from 'react-native';
-import { useState } from 'react';
+
+const API_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=';
 
 export default function App() {
 	const [recipes, setRecipes] = useState([]);
-	const [keyword, setKeyword] = useState('');
+	const [searchTerm, setSearchTerm] = useState('');
 
-	const search = () => {
-		fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${keyword}`)
+	const handleSearch = () => {
+		fetch(API_URL + searchTerm)
 			.then((response) => response.json())
-			.then((responseData) => {
-				setRecipes(responseData.meals);
+			.then((data) => {
+				setRecipes(data.meals);
 			})
 			.catch((error) => {
 				console.error(error);
@@ -27,27 +28,31 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			<View>
+			<FlatList
+				style={styles.listContainer}
+				data={recipes}
+				keyExtractor={(item) => item.idMeal}
+				renderItem={({ item }) => (
+					<View style={styles.itemContainer}>
+						<Image
+							style={styles.itemImage}
+							source={{ uri: item.strMealThumb }}
+						/>
+						<Text style={styles.itemTitle}>{item.strMeal}</Text>
+					</View>
+				)}
+			/>
+
+			<View style={styles.searchContainer}>
 				<TextInput
-					value={keyword}
-					onChangeText={(text) => setKeyword(text)}
-					placeholder='Search...'
+					style={styles.input}
+					placeholder='Enter ingredient...'
+					value={searchTerm}
+					onChangeText={(text) => setSearchTerm(text)}
 				/>
-				<TouchableOpacity onPress={search}>
-					<Text>Search</Text>
+				<TouchableOpacity style={styles.button} onPress={handleSearch}>
+					<Text style={styles.buttonText}>Search</Text>
 				</TouchableOpacity>
-			</View>
-			<View>
-				<FlatList
-					data={recipes}
-					keyExtractor={(item) => item.idMeal}
-					renderItem={({ item }) => (
-						<View>
-							<Image source={{ uri: item.strMealThumb }} />
-							<Text>{item.strMeal}</Text>
-						</View>
-					)}
-				/>
 			</View>
 		</View>
 	);
@@ -56,8 +61,53 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
+		backgroundColor: '#3B4252',
 		alignItems: 'center',
 		justifyContent: 'center',
+		padding: 10,
+	},
+	searchContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 10,
+	},
+	input: {
+		flex: 1,
+		height: 40,
+		borderColor: 'gray',
+		borderWidth: 1,
+		marginRight: 10,
+		paddingHorizontal: 10,
+		color: '#ECEFF4',
+	},
+	button: {
+		padding: 10,
+		backgroundColor: '#81A1C1',
+		borderRadius: 5,
+	},
+	buttonText: {
+		color: '#ECEFF4',
+		fontWeight: 'bold',
+	},
+	listContainer: {
+		flex: 1,
+		width: '100%',
+	},
+	itemContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingVertical: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: '#ccc',
+	},
+	itemImage: {
+		width: 50,
+		height: 50,
+		marginRight: 10,
+	},
+	itemTitle: {
+		fontSize: 16,
+		color: '#ECEFF4',
+		fontWeight: 'bold',
 	},
 });
